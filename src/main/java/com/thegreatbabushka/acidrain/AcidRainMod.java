@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -25,6 +26,10 @@ public class AcidRainMod {
 
         MinecraftForge.EVENT_BUS.register(this);
         modEventBus.addListener(this::addCreative);
+        
+        // Register event handlers
+        MinecraftForge.EVENT_BUS.register(new AcidRainEvent());
+        MinecraftForge.EVENT_BUS.register(new AcidRainBlockDissolver());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -38,6 +43,12 @@ public class AcidRainMod {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         LOGGER.info("Acid Rain Mod server starting");
+    }
+
+    @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandsEvent event) {
+        AcidRainCommand.register(event.getDispatcher());
+        LOGGER.info("Acid Rain commands registered");
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

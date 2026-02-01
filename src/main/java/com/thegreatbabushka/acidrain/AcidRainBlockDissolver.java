@@ -2,21 +2,22 @@ package com.thegreatbabushka.acidrain;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.util.List;
 import java.util.Random;
 
 public class AcidRainBlockDissolver {
     private static final int CHECK_INTERVAL = 20; // Check every second
     private static final int BLOCKS_PER_CHECK = 5; // Check 5 random blocks per interval
     private static final double DISSOLVE_CHANCE = 0.1; // 10% chance to dissolve when checked
-    private static final int DISSOLVE_RADIUS = 16; // Check within 16 blocks of random positions
+    private static final int SEARCH_RADIUS = 32; // Search within 32 blocks of players
     
-    private int tickCounter = 0;
     private final Random random = new Random();
 
     @SubscribeEvent
@@ -37,37 +38,35 @@ public class AcidRainBlockDissolver {
             return;
         }
 
-        // Only check at intervals
-        tickCounter++;
-        if (tickCounter < CHECK_INTERVAL) {
+        // Only check at intervals using level game time
+        if (serverLevel.getGameTime() % CHECK_INTERVAL != 0) {
             return;
         }
-        tickCounter = 0;
+
+        // Get list of players to find loaded areas
+        List<ServerPlayer> players = serverLevel.players();
+        if (players.isEmpty()) {
+            return;
+        }
 
         // Check random blocks for dissolution
         for (int i = 0; i < BLOCKS_PER_CHECK; i++) {
-            // Get random position in loaded chunks
-            BlockPos randomPos = getRandomLoadedPosition(serverLevel);
+            // Get random position near a random player
+            ServerPlayer randomPlayer = players.get(random.nextInt(players.size()));
+            BlockPos randomPos = getRandomPositionNearPlayer(randomPlayer);
             if (randomPos != null) {
                 tryDissolveBlock(serverLevel, randomPos);
             }
         }
     }
 
-    private BlockPos getRandomLoadedPosition(ServerLevel level) {
-        // Get a random loaded chunk position
-        var loadedChunks = level.getChunkSource().chunkMap.getChunks();
-        if (loadedChunks.isEmpty()) {
-            return null;
-        }
-
-        var chunkArray = loadedChunks.toArray();
-        var randomChunk = chunkArray[random.nextInt(chunkArray.length)];
+    private BlockPos getRandomPositionNearPlayer(ServerPlayer player) {
+        BlockPos playerPos = player.blockPosition();
         
-        // Get random position in chunk
-        int x = randomChunk.getPos().getMinBlockX() + random.nextInt(16);
-        int z = randomChunk.getPos().getMinBlockZ() + random.nextInt(16);
-        int y = level.getHeight() - 1;
+        // Get random position within search radius
+        int x = playerPos.getX() + random.nextInt(SEARCH_RADIUS * 2) - SEARCH_RADIUS;
+        int z = playerPos.getZ() + random.nextInt(SEARCH_RADIUS * 2) - SEARCH_RADIUS;
+        int y = player.level().getHeight() - 1;
         
         return new BlockPos(x, y, z);
     }

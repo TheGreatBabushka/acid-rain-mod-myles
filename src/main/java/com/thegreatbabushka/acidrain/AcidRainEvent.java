@@ -12,8 +12,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class AcidRainEvent {
     private static final int DAMAGE_INTERVAL = 20; // Damage every second (20 ticks)
-    private static final float DAMAGE_AMOUNT = 1.0f; // Half a heart
-    private int tickCounter = 0;
+    private static final float DAMAGE_AMOUNT = 1.0f; // 1.0 damage (0.5 hearts)
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -34,12 +33,10 @@ public class AcidRainEvent {
             return;
         }
 
-        // Only damage at intervals
-        tickCounter++;
-        if (tickCounter < DAMAGE_INTERVAL) {
+        // Only damage at intervals using game tick
+        if (player.tickCount % DAMAGE_INTERVAL != 0) {
             return;
         }
-        tickCounter = 0;
 
         // Check if player is exposed to the sky (not under a block)
         BlockPos playerPos = player.blockPosition();

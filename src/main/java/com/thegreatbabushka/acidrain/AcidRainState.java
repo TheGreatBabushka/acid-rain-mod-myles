@@ -12,9 +12,7 @@ public class AcidRainState {
     private static final Map<UUID, Boolean> dimensionAcidRainState = new HashMap<>();
 
     public static boolean isAcidRainActive(ServerLevel level) {
-        UUID dimensionId = level.dimension().location().hashCode() != 0 
-            ? UUID.nameUUIDFromBytes(level.dimension().location().toString().getBytes())
-            : UUID.randomUUID();
+        UUID dimensionId = UUID.nameUUIDFromBytes(level.dimension().location().toString().getBytes());
         return dimensionAcidRainState.getOrDefault(dimensionId, false);
     }
 

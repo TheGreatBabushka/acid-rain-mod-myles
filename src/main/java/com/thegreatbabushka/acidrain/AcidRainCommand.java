@@ -33,9 +33,15 @@ public class AcidRainCommand {
     private static int startAcidRain(CommandSourceStack source) {
         ServerLevel level = source.getLevel();
         
+        // Weather parameters: clearWeatherTime, rainTime, isRaining, isThundering
+        final int CLEAR_WEATHER_TIME = 0;
+        final int RAIN_DURATION = 6000;
+        final boolean IS_RAINING = true;
+        final boolean IS_THUNDERING = true;
+        
         // Enable rain if not already raining
         if (!level.isRaining()) {
-            level.setWeatherParameters(0, 6000, true, true); // Clear time, rain time, raining, thundering
+            level.setWeatherParameters(CLEAR_WEATHER_TIME, RAIN_DURATION, IS_RAINING, IS_THUNDERING);
         }
         
         // Enable acid rain
@@ -48,11 +54,17 @@ public class AcidRainCommand {
     private static int stopAcidRain(CommandSourceStack source) {
         ServerLevel level = source.getLevel();
         
+        // Weather parameters: clearWeatherTime, rainTime, isRaining, isThundering
+        final int CLEAR_WEATHER_DURATION = 6000;
+        final int RAIN_TIME = 0;
+        final boolean IS_RAINING = false;
+        final boolean IS_THUNDERING = false;
+        
         // Disable acid rain
         AcidRainState.setAcidRainActive(level, false);
         
-        // Optionally stop rain completely
-        level.setWeatherParameters(6000, 0, false, false);
+        // Stop rain completely
+        level.setWeatherParameters(CLEAR_WEATHER_DURATION, RAIN_TIME, IS_RAINING, IS_THUNDERING);
         
         source.sendSuccess(() -> Component.literal("Acid rain has stopped."), true);
         return 1;
@@ -62,9 +74,15 @@ public class AcidRainCommand {
         ServerLevel level = source.getLevel();
         
         if (enabled) {
+            // Weather parameters for starting rain
+            final int CLEAR_WEATHER_TIME = 0;
+            final int RAIN_DURATION = 6000;
+            final boolean IS_RAINING = true;
+            final boolean IS_THUNDERING = true;
+            
             // Enable rain if not already raining
             if (!level.isRaining()) {
-                level.setWeatherParameters(0, 6000, true, true);
+                level.setWeatherParameters(CLEAR_WEATHER_TIME, RAIN_DURATION, IS_RAINING, IS_THUNDERING);
             }
             AcidRainState.setAcidRainActive(level, true);
             source.sendSuccess(() -> Component.literal("Acid rain enabled."), true);

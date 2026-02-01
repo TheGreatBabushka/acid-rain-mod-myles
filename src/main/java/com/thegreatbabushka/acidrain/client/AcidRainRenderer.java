@@ -1,9 +1,7 @@
 package com.thegreatbabushka.acidrain.client;
 
-import com.thegreatbabushka.acidrain.AcidRainState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,7 +19,7 @@ public class AcidRainRenderer {
 
         // Check if acid rain is active
         // Note: On client side, we need to sync this from server
-        // For now, we'll apply green tint when it's raining
+        // For now, we'll apply green tint when it's raining and thundering
         // This will need to be synced with server state in a full implementation
         if (isClientAcidRainActive()) {
             // Add green tint to fog color when acid rain is active

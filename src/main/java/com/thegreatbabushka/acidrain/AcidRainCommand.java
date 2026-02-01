@@ -47,7 +47,7 @@ public class AcidRainCommand {
         // Enable acid rain
         AcidRainState.setAcidRainActive(level, true);
         
-        source.sendSuccess(() -> Component.literal("Acid rain has started! Take cover!"), true);
+        source.sendSuccess(() -> Component.translatable("command.acidrain.start"), true);
         return 1;
     }
 
@@ -66,7 +66,7 @@ public class AcidRainCommand {
         // Stop rain completely
         level.setWeatherParameters(CLEAR_WEATHER_DURATION, RAIN_TIME, IS_RAINING, IS_THUNDERING);
         
-        source.sendSuccess(() -> Component.literal("Acid rain has stopped."), true);
+        source.sendSuccess(() -> Component.translatable("command.acidrain.stop"), true);
         return 1;
     }
 
@@ -85,10 +85,10 @@ public class AcidRainCommand {
                 level.setWeatherParameters(CLEAR_WEATHER_TIME, RAIN_DURATION, IS_RAINING, IS_THUNDERING);
             }
             AcidRainState.setAcidRainActive(level, true);
-            source.sendSuccess(() -> Component.literal("Acid rain enabled."), true);
+            source.sendSuccess(() -> Component.translatable("command.acidrain.enabled"), true);
         } else {
             AcidRainState.setAcidRainActive(level, false);
-            source.sendSuccess(() -> Component.literal("Acid rain disabled."), true);
+            source.sendSuccess(() -> Component.translatable("command.acidrain.disabled"), true);
         }
         
         return 1;

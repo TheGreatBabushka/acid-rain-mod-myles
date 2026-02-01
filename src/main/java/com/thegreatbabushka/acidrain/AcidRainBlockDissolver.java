@@ -3,6 +3,7 @@ package com.thegreatbabushka.acidrain;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -10,7 +11,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.List;
-import java.util.Random;
 
 public class AcidRainBlockDissolver {
     private static final int CHECK_INTERVAL = 20; // Check every second
@@ -18,7 +18,7 @@ public class AcidRainBlockDissolver {
     private static final double DISSOLVE_CHANCE = 0.1; // 10% chance to dissolve when checked
     private static final int SEARCH_RADIUS = 32; // Search within 32 blocks of players
     
-    private final Random random = new Random();
+    private final RandomSource random = RandomSource.create();
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.LevelTickEvent event) {

@@ -113,7 +113,7 @@ All values are easily configurable in the source code:
 - **Block Check Interval**: `CHECK_INTERVAL = 20` (ticks)
 - **Blocks Per Check**: `BLOCKS_PER_CHECK = 5`
 - **Dissolve Chance**: `DISSOLVE_CHANCE = 0.1` (10%)
-- **Check Radius**: `DISSOLVE_RADIUS = 16` (blocks)
+- **Search Radius**: `SEARCH_RADIUS = 32` (blocks)
 
 ## Testing Recommendations
 

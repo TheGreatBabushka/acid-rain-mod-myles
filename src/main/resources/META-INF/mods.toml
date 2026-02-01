@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="acidrain"
+version="${file.jarVersion}"
+displayName="Acid Rain Mod"
+authors="Myles"
+description='''
+A Minecraft mod that introduces acid rain and the acid bucket!
+'''
+displayURL="https://github.com/TheGreatBabushka/acid-rain-mod-myles"
+
+[[dependencies.acidrain]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.acidrain]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"

@@ -37,3 +37,4 @@ public class AcidRainRenderer {
         return level != null && level.isRaining() && level.isThundering();
     }
 }
+

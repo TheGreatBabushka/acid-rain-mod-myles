@@ -99,19 +99,19 @@ public class AcidRainRenderer {
                 int heightAtPos = level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z);
                 int minY = playerY - renderDistance;
                 int maxY = playerY + renderDistance;
-                int rainY = Math.max(heightAtPos, minY);
+                int rainStartY = Math.max(heightAtPos, minY);
                 
-                if (minY < rainY) {
-                    minY = rainY;
+                // Clamp minY and maxY to be at or above the rain start height
+                if (minY < rainStartY) {
+                    minY = rainStartY;
                 }
-                if (maxY < rainY) {
-                    maxY = rainY;
+                if (maxY < rainStartY) {
+                    maxY = rainStartY;
                 }
                 
-                int yDiff = Math.max(rainY, minY);
                 if (minY != maxY) {
                     RandomSource random = RandomSource.create((long)(x * x * 3121 + x * 45238971 ^ z * z * 418711 + z * 13761));
-                    mutablePos.set(x, yDiff, z);
+                    mutablePos.set(x, rainStartY, z);
                     
                     Biome biome = level.getBiome(mutablePos).value();
                     if (biome.getPrecipitationAt(mutablePos) == Biome.Precipitation.RAIN) {
@@ -120,9 +120,7 @@ public class AcidRainRenderer {
                         float distanceFromPlayer = (float)Math.sqrt(xOffset * xOffset + zOffset * zOffset) / (float)renderDistance;
                         
                         if (distanceFromPlayer < 1.0F) {
-                            mutablePos.set(x, yDiff, z);
-                            int combinedLight = level.getBrightness(LightTexture.BLOCK_SKY, mutablePos) * 16 + 
-                                              level.getBrightness(LightTexture.BLOCK_BLOCK, mutablePos);
+                            mutablePos.set(x, rainStartY, z);
                             int packedLight = LightTexture.pack(level.getBrightness(LightTexture.BLOCK_SKY, mutablePos), 
                                                                 level.getBrightness(LightTexture.BLOCK_BLOCK, mutablePos));
                             

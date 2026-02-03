@@ -1,12 +1,12 @@
 package com.thegreatbabushka.acidrain.mixin;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 /**
  * Mixin to change rain particle colors from blue to green during acid rain
@@ -20,60 +20,22 @@ public class LevelRendererMixin {
     private static final float ACID_RAIN_BLUE = 0.25f;   // 64/255
     
     /**
-     * Modify the red component of rain particles
+     * Modify all color calls in rain rendering to change from blue to green
      */
-    @ModifyArg(
+    @ModifyArgs(
         method = "renderSnowAndRain",
         at = @At(
             value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;color(FFFF)Lcom/mojang/blaze3d/vertex/VertexConsumer;",
-            ordinal = 0
-        ),
-        index = 0
+            target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;color(FFFF)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
+        )
     )
-    private float modifyRainRed(float red) {
+    private void modifyRainColor(Args args) {
         if (isAcidRainActive()) {
-            return ACID_RAIN_RED;
+            args.set(0, ACID_RAIN_RED);    // Red component
+            args.set(1, ACID_RAIN_GREEN);  // Green component
+            args.set(2, ACID_RAIN_BLUE);   // Blue component
+            // Keep alpha (index 3) as is
         }
-        return red;
-    }
-    
-    /**
-     * Modify the green component of rain particles
-     */
-    @ModifyArg(
-        method = "renderSnowAndRain",
-        at = @At(
-            value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;color(FFFF)Lcom/mojang/blaze3d/vertex/VertexConsumer;",
-            ordinal = 0
-        ),
-        index = 1
-    )
-    private float modifyRainGreen(float green) {
-        if (isAcidRainActive()) {
-            return ACID_RAIN_GREEN;
-        }
-        return green;
-    }
-    
-    /**
-     * Modify the blue component of rain particles
-     */
-    @ModifyArg(
-        method = "renderSnowAndRain",
-        at = @At(
-            value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;color(FFFF)Lcom/mojang/blaze3d/vertex/VertexConsumer;",
-            ordinal = 0
-        ),
-        index = 2
-    )
-    private float modifyRainBlue(float blue) {
-        if (isAcidRainActive()) {
-            return ACID_RAIN_BLUE;
-        }
-        return blue;
     }
     
     private static boolean isAcidRainActive() {

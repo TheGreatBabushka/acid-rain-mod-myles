@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.thegreatbabushka.acidrain.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "acidrain.refmap.json",
+  "client": [
+    "BiomeColorsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

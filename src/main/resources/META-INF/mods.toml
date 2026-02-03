@@ -12,6 +12,9 @@ A Minecraft mod that introduces acid rain and the acid bucket!
 '''
 displayURL="https://github.com/TheGreatBabushka/acid-rain-mod-myles"
 
+[[mixins]]
+config="acidrain.mixins.json"
+
 [[dependencies.acidrain]]
     modId="forge"
     mandatory=true

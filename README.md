@@ -40,7 +40,9 @@ Toggle acid rain on or off. When set to `true`, it will start raining if not alr
 
 ### Visual Effects
 - When acid rain is active, the fog and atmosphere take on a greenish tint
+- Water bodies (lakes, rivers, oceans) appear green during acid rain
 - The effect is most noticeable during thunderstorms when acid rain is enabled
+- Rain particles remain visible (though not green themselves, the green atmosphere creates an acid rain ambiance)
 
 ## Technical Details
 
@@ -49,7 +51,8 @@ Toggle acid rain on or off. When set to `true`, it will start raining if not alr
 - **AcidRainBlockDissolver**: Manages random block dissolution mechanics
 - **AcidRainCommand**: Provides command interface for controlling acid rain
 - **AcidRainState**: Tracks acid rain state per dimension
-- **AcidRainRenderer**: Adds greenish visual effects on the client side
+- **AcidRainRenderer**: Adds greenish fog tint on the client side
+- **BiomeColorsMixin**: Changes water block colors to green during acid rain
 
 ### Configuration
 The following parameters can be modified in the source code if needed:

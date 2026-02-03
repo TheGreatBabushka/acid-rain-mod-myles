@@ -1,11 +1,12 @@
 package com.thegreatbabushka.acidrain.mixin;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 /**
  * Mixin to change rain particle colors from blue to green during acid rain
@@ -27,57 +28,19 @@ public class LevelRendererMixin {
     }
     
     /**
-     * Modify the red component of rain/snow particles.
-     * During thunderstorms (acid rain), only rain is rendered, not snow.
+     * Redirect the color() call to use green colors during acid rain
      */
-    @ModifyArg(
+    @Redirect(
         method = "renderSnowAndRain",
         at = @At(
             value = "INVOKE",
             target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;color(FFFF)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
-        ),
-        index = 0
+        )
     )
-    private float modifyRainRed(float red) {
+    private VertexConsumer redirectRainColor(VertexConsumer instance, float red, float green, float blue, float alpha) {
         if (isAcidRainActive()) {
-            return ACID_RAIN_RED;
+            return instance.color(ACID_RAIN_RED, ACID_RAIN_GREEN, ACID_RAIN_BLUE, alpha);
         }
-        return red;
-    }
-    
-    /**
-     * Modify the green component of rain/snow particles.
-     */
-    @ModifyArg(
-        method = "renderSnowAndRain",
-        at = @At(
-            value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;color(FFFF)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
-        ),
-        index = 1
-    )
-    private float modifyRainGreen(float green) {
-        if (isAcidRainActive()) {
-            return ACID_RAIN_GREEN;
-        }
-        return green;
-    }
-    
-    /**
-     * Modify the blue component of rain/snow particles.
-     */
-    @ModifyArg(
-        method = "renderSnowAndRain",
-        at = @At(
-            value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;color(FFFF)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
-        ),
-        index = 2
-    )
-    private float modifyRainBlue(float blue) {
-        if (isAcidRainActive()) {
-            return ACID_RAIN_BLUE;
-        }
-        return blue;
+        return instance.color(red, green, blue, alpha);
     }
 }

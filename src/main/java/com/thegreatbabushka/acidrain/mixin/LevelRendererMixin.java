@@ -4,8 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 /**
@@ -19,8 +22,22 @@ public class LevelRendererMixin {
     private static final float ACID_RAIN_GREEN = 1.0f;   // 255/255
     private static final float ACID_RAIN_BLUE = 0.25f;   // 64/255
     
+    @Unique
+    private boolean acidRainActiveCache = false;
+    
     /**
-     * Modify all color calls in rain rendering to change from blue to green
+     * Cache the acid rain state at the start of rendering to avoid repeated checks
+     */
+    @Inject(method = "renderSnowAndRain", at = @At("HEAD"))
+    private void cacheAcidRainState(CallbackInfo ci) {
+        ClientLevel level = Minecraft.getInstance().level;
+        acidRainActiveCache = level != null && level.isRaining() && level.isThundering();
+    }
+    
+    /**
+     * Modify all color calls in rain rendering to change from blue to green.
+     * Note: This affects all particles in renderSnowAndRain, but during thunderstorms
+     * (our acid rain condition), only rain particles are rendered, not snow.
      */
     @ModifyArgs(
         method = "renderSnowAndRain",
@@ -30,16 +47,11 @@ public class LevelRendererMixin {
         )
     )
     private void modifyRainColor(Args args) {
-        if (isAcidRainActive()) {
+        if (acidRainActiveCache) {
             args.set(0, ACID_RAIN_RED);    // Red component
             args.set(1, ACID_RAIN_GREEN);  // Green component
             args.set(2, ACID_RAIN_BLUE);   // Blue component
             // Keep alpha (index 3) as is
         }
-    }
-    
-    private static boolean isAcidRainActive() {
-        ClientLevel level = Minecraft.getInstance().level;
-        return level != null && level.isRaining() && level.isThundering();
     }
 }

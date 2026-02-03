@@ -40,7 +40,9 @@ Toggle acid rain on or off. When set to `true`, it will start raining if not alr
 
 ### Visual Effects
 - When acid rain is active, the fog and atmosphere take on a greenish tint
+- Rain drops are rendered with a distinctive green color
 - The effect is most noticeable during thunderstorms when acid rain is enabled
+- Custom rain particle rendering provides visible acid rain drops
 
 ## Technical Details
 
@@ -49,7 +51,7 @@ Toggle acid rain on or off. When set to `true`, it will start raining if not alr
 - **AcidRainBlockDissolver**: Manages random block dissolution mechanics
 - **AcidRainCommand**: Provides command interface for controlling acid rain
 - **AcidRainState**: Tracks acid rain state per dimension
-- **AcidRainRenderer**: Adds greenish visual effects on the client side
+- **AcidRainRenderer**: Renders green-tinted rain particles and adds greenish fog effects on the client side
 
 ### Configuration
 The following parameters can be modified in the source code if needed:

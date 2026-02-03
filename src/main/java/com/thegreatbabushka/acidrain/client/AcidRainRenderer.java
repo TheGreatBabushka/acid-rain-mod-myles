@@ -91,6 +91,9 @@ public class AcidRainRenderer {
         
         int renderDistance = 10; // Render rain within 10 blocks
         
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+        Matrix4f matrix = event.getPoseStack().last().pose();
+        
         for (int z = playerZ - renderDistance; z <= playerZ + renderDistance; ++z) {
             for (int x = playerX - renderDistance; x <= playerX + renderDistance; ++x) {
                 int heightAtPos = level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z);
@@ -122,9 +125,6 @@ public class AcidRainRenderer {
                                               level.getBrightness(LightTexture.BLOCK_BLOCK, mutablePos);
                             int packedLight = LightTexture.pack(level.getBrightness(LightTexture.BLOCK_SKY, mutablePos), 
                                                                 level.getBrightness(LightTexture.BLOCK_BLOCK, mutablePos));
-                            
-                            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-                            Matrix4f matrix = event.getPoseStack().last().pose();
                             
                             float particleX = (float)((double)x + 0.5D - mc.player.getX());
                             float particleZ = (float)((double)z + 0.5D - mc.player.getZ());
@@ -173,13 +173,13 @@ public class AcidRainRenderer {
                                           .endVertex();
                                 }
                             }
-                            
-                            tesselator.end();
                         }
                     }
                 }
             }
         }
+        
+        tesselator.end();
         
         RenderSystem.enableCull();
         RenderSystem.disableBlend();

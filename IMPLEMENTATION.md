@@ -32,8 +32,10 @@ This document summarizes the implementation of the acid rain weather system for 
    - Requires OP level 2 permissions
 
 ### Client Rendering
-5. **AcidRainRenderer.java** (41 lines)
+5. **AcidRainRenderer.java** (185 lines - updated)
+   - Renders custom green-tinted rain particles
    - Adds greenish tint to fog when acid rain is active
+   - Uses RenderLevelStageEvent for custom rain rendering
    - Modifies fog color on client side
    - Currently uses thunderstorm as proxy for acid rain detection
 
@@ -74,6 +76,8 @@ This document summarizes the implementation of the acid rain weather system for 
 
 ### ✅ Visual Effects
 - Greenish fog tint
+- Green-tinted rain particles
+- Custom rain drop rendering
 - Client-side rendering
 - Weather-based activation
 
@@ -103,7 +107,9 @@ This document summarizes the implementation of the acid rain weather system for 
 ### Visual Effects Flow
 1. Client checks if raining and thundering
 2. If yes, apply green tint to fog color
-3. Effect applied every frame
+3. Render custom green-tinted rain particles
+4. Rain particles use Minecraft's rain texture with green coloring
+5. Effects applied every frame
 
 ## Configuration Options
 All values are easily configurable in the source code:

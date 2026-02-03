@@ -7,9 +7,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 /**
  * Mixin to change rain particle colors from blue to green during acid rain
@@ -35,23 +34,48 @@ public class LevelRendererMixin {
     }
     
     /**
-     * Modify all color calls in rain rendering to change from blue to green.
-     * Note: This affects all particles in renderSnowAndRain, but during thunderstorms
-     * (our acid rain condition), only rain particles are rendered, not snow.
+     * Modify the red component of rain/snow particles.
+     * During thunderstorms (acid rain), only rain is rendered, not snow.
      */
-    @ModifyArgs(
+    @ModifyArg(
         method = "renderSnowAndRain",
         at = @At(
             value = "INVOKE",
             target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;color(FFFF)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
-        )
+        ),
+        index = 0
     )
-    private void modifyRainColor(Args args) {
-        if (acidRainActiveCache) {
-            args.set(0, ACID_RAIN_RED);    // Red component
-            args.set(1, ACID_RAIN_GREEN);  // Green component
-            args.set(2, ACID_RAIN_BLUE);   // Blue component
-            // Keep alpha (index 3) as is
-        }
+    private float modifyRainRed(float red) {
+        return acidRainActiveCache ? ACID_RAIN_RED : red;
+    }
+    
+    /**
+     * Modify the green component of rain/snow particles.
+     */
+    @ModifyArg(
+        method = "renderSnowAndRain",
+        at = @At(
+            value = "INVOKE",
+            target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;color(FFFF)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
+        ),
+        index = 1
+    )
+    private float modifyRainGreen(float green) {
+        return acidRainActiveCache ? ACID_RAIN_GREEN : green;
+    }
+    
+    /**
+     * Modify the blue component of rain/snow particles.
+     */
+    @ModifyArg(
+        method = "renderSnowAndRain",
+        at = @At(
+            value = "INVOKE",
+            target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;color(FFFF)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
+        ),
+        index = 2
+    )
+    private float modifyRainBlue(float blue) {
+        return acidRainActiveCache ? ACID_RAIN_BLUE : blue;
     }
 }

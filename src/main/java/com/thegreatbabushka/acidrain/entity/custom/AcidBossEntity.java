@@ -32,6 +32,7 @@ public class AcidBossEntity extends Monster {
     
     private int shootCooldown = 0;
     private int eatCooldown = 0;
+    private int mouthOpenTimer = 0;
     private UUID eatenPlayerUUID;
     private int eatTimer = 0;
     private static final int EAT_DURATION = 100; // 5 seconds at 20 ticks/second
@@ -91,6 +92,14 @@ public class AcidBossEntity extends Monster {
         super.aiStep();
 
         if (!this.level().isClientSide) {
+            // Handle mouth open timer
+            if (mouthOpenTimer > 0) {
+                mouthOpenTimer--;
+                if (mouthOpenTimer == 0) {
+                    setMouthOpen(false);
+                }
+            }
+
             // Handle eaten player
             if (eatenPlayerUUID != null) {
                 Player eatenPlayer = this.level().getPlayerByUUID(eatenPlayerUUID);
@@ -153,6 +162,7 @@ public class AcidBossEntity extends Monster {
 
     private void shootAcidProjectile(LivingEntity target) {
         setMouthOpen(true);
+        mouthOpenTimer = 10; // Keep mouth open for 10 ticks (0.5 seconds)
         
         double d0 = target.getX() - this.getX();
         double d1 = target.getY(0.5D) - this.getY(0.5D);
@@ -164,16 +174,6 @@ public class AcidBossEntity extends Monster {
         
         this.level().addFreshEntity(projectile);
         this.playSound(SoundEvents.GHAST_SHOOT, 1.0F, 1.0F);
-        
-        // Close mouth after a short delay
-        this.level().getServer().execute(() -> {
-            try {
-                Thread.sleep(500);
-                setMouthOpen(false);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        });
     }
 
     private void tryToEatPlayer(Player player) {
@@ -224,6 +224,7 @@ public class AcidBossEntity extends Monster {
         pCompound.putInt("ShootCooldown", this.shootCooldown);
         pCompound.putInt("EatCooldown", this.eatCooldown);
         pCompound.putInt("EatTimer", this.eatTimer);
+        pCompound.putInt("MouthOpenTimer", this.mouthOpenTimer);
         if (this.eatenPlayerUUID != null) {
             pCompound.putUUID("EatenPlayer", this.eatenPlayerUUID);
         }
@@ -236,6 +237,7 @@ public class AcidBossEntity extends Monster {
         this.shootCooldown = pCompound.getInt("ShootCooldown");
         this.eatCooldown = pCompound.getInt("EatCooldown");
         this.eatTimer = pCompound.getInt("EatTimer");
+        this.mouthOpenTimer = pCompound.getInt("MouthOpenTimer");
         if (pCompound.hasUUID("EatenPlayer")) {
             this.eatenPlayerUUID = pCompound.getUUID("EatenPlayer");
         }
@@ -251,15 +253,13 @@ public class AcidBossEntity extends Monster {
         }
 
         @Override
-        public void start() {
-            super.start();
-            acidBoss.setMouthOpen(true);
-        }
-
-        @Override
-        public void stop() {
-            super.stop();
-            acidBoss.setMouthOpen(false);
+        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
+            double d0 = this.getAttackReachSqr(pEnemy);
+            if (pDistToEnemySqr <= d0 && this.getTicksUntilNextAttack() <= 0) {
+                this.acidBoss.setMouthOpen(true);
+                this.acidBoss.mouthOpenTimer = 10;
+            }
+            super.checkAndPerformAttack(pEnemy, pDistToEnemySqr);
         }
     }
 }

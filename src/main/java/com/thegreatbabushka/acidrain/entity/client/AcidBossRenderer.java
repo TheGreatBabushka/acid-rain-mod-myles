@@ -24,9 +24,7 @@ public class AcidBossRenderer extends MobRenderer<AcidBossEntity, AcidBossModel>
     public void render(AcidBossEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight) {
         // Scale based on size
         float scale = pEntity.getSize() * 0.5F;
-        pMatrixStack.pushPose();
         pMatrixStack.scale(scale, scale, scale);
         super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
-        pMatrixStack.popPose();
     }
 }

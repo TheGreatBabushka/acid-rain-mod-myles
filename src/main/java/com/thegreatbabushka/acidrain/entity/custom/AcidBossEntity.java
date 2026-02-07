@@ -36,6 +36,7 @@ public class AcidBossEntity extends Monster {
     private UUID eatenPlayerUUID;
     private int eatTimer = 0;
     private static final int EAT_DURATION = 100; // 5 seconds at 20 ticks/second
+    private static final int MOUTH_OPEN_DURATION = 10; // 0.5 seconds
 
     public AcidBossEntity(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -104,14 +105,19 @@ public class AcidBossEntity extends Monster {
             if (eatenPlayerUUID != null) {
                 Player eatenPlayer = this.level().getPlayerByUUID(eatenPlayerUUID);
                 if (eatenPlayer != null && eatenPlayer.isAlive()) {
-                    // Keep player inside boss
-                    eatenPlayer.teleportTo(this.getX(), this.getY() + 1, this.getZ());
-                    eatenPlayer.setDeltaMovement(Vec3.ZERO);
-                    eatenPlayer.fallDistance = 0;
+                    // Make player ride the boss to keep them attached
+                    if (!eatenPlayer.isPassenger()) {
+                        eatenPlayer.startRiding(this, true);
+                    }
+                    // Apply slow damage over time
+                    if (eatTimer % 20 == 0) { // Every second
+                        eatenPlayer.hurt(this.damageSources().mobAttack(this), 1.0F);
+                    }
                     
                     eatTimer++;
                     if (eatTimer >= EAT_DURATION) {
                         // Spit out player
+                        eatenPlayer.stopRiding();
                         Vec3 spitDirection = this.getLookAngle().scale(2.0);
                         eatenPlayer.teleportTo(
                             this.getX() + spitDirection.x,
@@ -162,7 +168,7 @@ public class AcidBossEntity extends Monster {
 
     private void shootAcidProjectile(LivingEntity target) {
         setMouthOpen(true);
-        mouthOpenTimer = 10; // Keep mouth open for 10 ticks (0.5 seconds)
+        mouthOpenTimer = MOUTH_OPEN_DURATION;
         
         double d0 = target.getX() - this.getX();
         double d1 = target.getY(0.5D) - this.getY(0.5D);
@@ -257,7 +263,7 @@ public class AcidBossEntity extends Monster {
             double d0 = this.getAttackReachSqr(pEnemy);
             if (pDistToEnemySqr <= d0 && this.getTicksUntilNextAttack() <= 0) {
                 this.acidBoss.setMouthOpen(true);
-                this.acidBoss.mouthOpenTimer = 10;
+                this.acidBoss.mouthOpenTimer = MOUTH_OPEN_DURATION;
             }
             super.checkAndPerformAttack(pEnemy, pDistToEnemySqr);
         }

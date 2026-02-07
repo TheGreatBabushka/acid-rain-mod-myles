@@ -2,6 +2,8 @@ package com.thegreatbabushka.acidrain.entity.custom;
 
 import com.thegreatbabushka.acidrain.entity.ModEntities;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
@@ -43,8 +45,8 @@ public class AcidProjectileEntity extends ThrowableProjectile {
         if (!this.level().isClientSide) {
             if (pResult.getEntity() instanceof LivingEntity livingEntity) {
                 livingEntity.hurt(this.damageSources().mobProjectile(this, (LivingEntity) this.getOwner()), 6.0F);
-                // Apply lingering acid damage effect
-                livingEntity.setSecondsOnFire(5);
+                // Apply poison effect to represent acid damage over time
+                livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0));
             }
         }
     }

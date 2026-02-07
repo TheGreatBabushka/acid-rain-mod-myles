@@ -77,7 +77,9 @@ public class AcidRainMod {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             LOGGER.info("Acid Rain Mod client setup");
-            EntityRenderers.register(ModEntities.ACID_BOSS.get(), AcidBossRenderer::new);
+            event.enqueueWork(() -> {
+                EntityRenderers.register(ModEntities.ACID_BOSS.get(), AcidBossRenderer::new);
+            });
         }
 
         @SubscribeEvent

@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "acidrain:item/acid_boss_spawn_egg"
+  }
+}

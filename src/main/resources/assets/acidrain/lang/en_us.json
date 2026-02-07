@@ -3,5 +3,7 @@
   "command.acidrain.start": "Acid rain has started! Take cover!",
   "command.acidrain.stop": "Acid rain has stopped.",
   "command.acidrain.enabled": "Acid rain enabled.",
-  "command.acidrain.disabled": "Acid rain disabled."
+  "command.acidrain.disabled": "Acid rain disabled.",
+  "entity.acidrain.acid_boss": "Acid Boss",
+  "item.acidrain.acid_boss_spawn_egg": "Acid Boss Spawn Egg"
 }

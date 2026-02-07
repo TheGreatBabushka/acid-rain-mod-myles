@@ -104,12 +104,14 @@ public class AcidBossEntity extends Monster {
             // Handle eaten player
             if (eatenPlayerUUID != null) {
                 Player eatenPlayer = this.level().getPlayerByUUID(eatenPlayerUUID);
-                if (eatenPlayer != null && eatenPlayer.isAlive()) {
-                    // Make player ride the boss to keep them attached
-                    if (!eatenPlayer.isPassenger()) {
-                        eatenPlayer.startRiding(this, true);
-                    }
-                    // Apply slow damage over time
+                if (eatenPlayer != null && eatenPlayer.isAlive() && !eatenPlayer.isSpectator()) {
+                    // Keep player close to boss position (inside it visually)
+                    Vec3 bossPos = new Vec3(this.getX(), this.getY() + 0.5, this.getZ());
+                    eatenPlayer.setPos(bossPos.x, bossPos.y, bossPos.z);
+                    eatenPlayer.setDeltaMovement(Vec3.ZERO);
+                    eatenPlayer.fallDistance = 0;
+                    
+                    // Apply blindness effect to simulate being inside
                     if (eatTimer % 20 == 0) { // Every second
                         eatenPlayer.hurt(this.damageSources().mobAttack(this), 1.0F);
                     }
@@ -117,7 +119,6 @@ public class AcidBossEntity extends Monster {
                     eatTimer++;
                     if (eatTimer >= EAT_DURATION) {
                         // Spit out player
-                        eatenPlayer.stopRiding();
                         Vec3 spitDirection = this.getLookAngle().scale(2.0);
                         eatenPlayer.teleportTo(
                             this.getX() + spitDirection.x,
